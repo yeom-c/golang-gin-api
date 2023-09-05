@@ -1,17 +1,13 @@
 package route
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
+	"github.com/yeom-c/golang-gin-api/controller"
 )
 
 func AccountRG(rg *gin.RouterGroup) {
+	accountController := controller.NewAccountController()
 	accountRG := rg.Group("/account")
 
-	accountRG.GET("", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "account",
-		})
-	})
+	accountRG.GET("", accountController.Get)
 }
