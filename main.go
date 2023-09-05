@@ -1,7 +1,15 @@
 package main
 
-import "github.com/yeom-c/golang-gin-api/config"
+import (
+	"fmt"
+
+	"github.com/gin-gonic/gin"
+	"github.com/yeom-c/golang-gin-api/config"
+)
 
 func main() {
-	println(config.EnvVar.ServerPort)
+	r := gin.New()
+	r.ContextWithFallback = true
+
+	r.Run(fmt.Sprintf(":%s", config.EnvVar.ServerPort))
 }
