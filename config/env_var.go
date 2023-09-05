@@ -8,6 +8,11 @@ import (
 
 var EnvVar struct {
 	ServerPort string `mapstructure:"SERVER_PORT"`
+	DBUser     string `mapstructure:"DB_USER"`
+	DBPassword string `mapstructure:"DB_PASSWORD"`
+	DBHost     string `mapstructure:"DB_HOST"`
+	DBPort     int    `mapstructure:"DB_PORT"`
+	DBName     string `mapstructure:"DB_NAME"`
 }
 
 func setDefault() {

@@ -2,29 +2,34 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/yeom-c/golang-gin-api/service"
 )
 
 type AccountController struct {
-	accountService *service.AccountService
+	service *service.AccountService
 }
 
-func NewAccountController() *AccountController {
-	return &AccountController{
-		accountService: service.NewAccountService(),
-	}
+func NewAccountController(service *service.AccountService) *AccountController {
+	return &AccountController{service}
 }
 
-func (c *AccountController) Get(ctx *gin.Context) {
-	account, err := c.accountService.Get()
+func (c *AccountController) GetAccountById(ctx *gin.Context) {
+	sid := ctx.Param("id")
+	id, _ := strconv.Atoi(sid)
+
+	acc, err := c.service.GetAccountById(id)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusNotFound)
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{
-		"message": account,
-	})
+	if acc == nil {
+		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, acc)
 }
