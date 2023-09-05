@@ -7,12 +7,18 @@ import (
 )
 
 var EnvVar struct {
-	ServerPort string `mapstructure:"SERVER_PORT" default:"8080"`
+	ServerPort string `mapstructure:"SERVER_PORT"`
+}
+
+func setDefault() {
+	viper.SetDefault("SERVER_PORT", "80")
 }
 
 func init() {
 	viper.SetConfigFile(".env")
 	viper.AutomaticEnv()
+
+	setDefault()
 
 	err := viper.ReadInConfig()
 	if err != nil {
