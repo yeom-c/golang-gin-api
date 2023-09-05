@@ -1,2 +1,6 @@
 .idea
 .vscode
+tmp
+
+.env*
+!.env.example
