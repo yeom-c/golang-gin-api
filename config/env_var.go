@@ -7,12 +7,16 @@ import (
 )
 
 var EnvVar struct {
-	ServerPort string `mapstructure:"SERVER_PORT"`
-	DBUser     string `mapstructure:"DB_USER"`
-	DBPassword string `mapstructure:"DB_PASSWORD"`
-	DBHost     string `mapstructure:"DB_HOST"`
-	DBPort     int    `mapstructure:"DB_PORT"`
-	DBName     string `mapstructure:"DB_NAME"`
+	ServerPort              string `mapstructure:"SERVER_PORT"`
+	DBUser                  string `mapstructure:"DB_USER"`
+	DBPassword              string `mapstructure:"DB_PASSWORD"`
+	DBHost                  string `mapstructure:"DB_HOST"`
+	DBPort                  int    `mapstructure:"DB_PORT"`
+	DBName                  string `mapstructure:"DB_NAME"`
+	DynamoDBRegion          string `mapstructure:"AWS_DYNAMODB_REGION"`
+	DynamoDBAccessKeyId     string `mapstructure:"AWS_DYNAMODB_ACCESS_KEY_ID"`
+	DynamoDBSecretAccessKey string `mapstructure:"AWS_DYNAMODB_SECRET_ACCESS_KEY"`
+	DynamodbEndpoint        string `mapstructure:"AWS_DYNAMODB_ENDPOINT"`
 }
 
 func setDefault() {

@@ -13,14 +13,13 @@ func main() {
 	r := gin.New()
 	r.ContextWithFallback = true
 
-	db := database.Conn
 	defer func() {
-		dbInstance, _ := db.DB()
-		dbInstance.Close()
+		gormInstance, _ := database.DB.Gorm.DB()
+		gormInstance.Close()
 	}()
 
 	// route 등록.
-	route.Init(r, db)
+	route.Init(r)
 
 	r.Run(fmt.Sprintf(":%s", config.EnvVar.ServerPort))
 }

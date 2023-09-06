@@ -1,20 +1,32 @@
 package database
 
 import (
+	"context"
 	"fmt"
 	"log"
 
-	"github.com/yeom-c/golang-gin-api/config"
+	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/credentials"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	cfg "github.com/yeom-c/golang-gin-api/config"
 	"github.com/yeom-c/golang-gin-api/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
 
-var Conn *gorm.DB
+var DB struct {
+	Gorm   *gorm.DB
+	Dynamo *dynamodb.Client
+}
 
 func init() {
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", config.EnvVar.DBUser, config.EnvVar.DBPassword, config.EnvVar.DBHost, config.EnvVar.DBPort, config.EnvVar.DBName)
+	initGorm()
+	initDynamoDB()
+}
+
+func initGorm() {
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local", cfg.EnvVar.DBUser, cfg.EnvVar.DBPassword, cfg.EnvVar.DBHost, cfg.EnvVar.DBPort, cfg.EnvVar.DBName)
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
@@ -25,5 +37,15 @@ func init() {
 	// auto migration.
 	db.AutoMigrate(&model.Account{})
 
-	Conn = db
+	DB.Gorm = db
+}
+
+func initDynamoDB() {
+	awsConfig, err := config.LoadDefaultConfig(context.Background(), config.WithRegion(cfg.EnvVar.DynamoDBRegion), config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(cfg.EnvVar.DynamoDBAccessKeyId, cfg.EnvVar.DynamoDBSecretAccessKey, "")))
+	if err != nil {
+		log.Fatal("failed to load aws config: ", err)
+	}
+
+	client := dynamodb.NewFromConfig(awsConfig)
+	DB.Dynamo = client
 }

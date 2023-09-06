@@ -22,14 +22,17 @@ func (c *AccountController) GetAccountById(ctx *gin.Context) {
 
 	acc, err := c.service.GetAccountById(id)
 	if err != nil {
+		if err.Error() != "record not found" {
+			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+			return
+		}
+	}
+
+	accDynamo, err := c.service.GetDynamoAccountById(id)
+	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	if acc == nil {
-		ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, acc)
+	ctx.JSON(http.StatusOK, gin.H{"account": acc, "dynamoAccount": accDynamo})
 }

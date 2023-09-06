@@ -6,13 +6,18 @@ import (
 )
 
 type AccountService struct {
-	repo *repository.AccountRepository
+	repo       *repository.AccountRepository
+	dynamoRepo *repository.AccountDynamoRepository
 }
 
-func NewAccountService(repo *repository.AccountRepository) *AccountService {
-	return &AccountService{repo}
+func NewAccountService(repo *repository.AccountRepository, dynamoRepo *repository.AccountDynamoRepository) *AccountService {
+	return &AccountService{repo, dynamoRepo}
 }
 
 func (s *AccountService) GetAccountById(id int) (*model.Account, error) {
 	return s.repo.FindById(id)
+}
+
+func (s *AccountService) GetDynamoAccountById(id int) (*model.DynamoAccount, error) {
+	return s.dynamoRepo.FindById(id)
 }
